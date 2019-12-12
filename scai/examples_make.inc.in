@@ -1,0 +1,49 @@
+###
+ # @file make.inc
+ #
+ # @license
+ # Copyright (c) 2009-2018
+ # Fraunhofer Institute for Algorithms and Scientific Computing SCAI
+ # for Fraunhofer-Gesellschaft
+ #
+ # This file is part of the SCAI framework LAMA.
+ #
+ # LAMA is free software: you can redistribute it and/or modify it under the
+ # terms of the GNU Lesser General Public License as published by the Free
+ # Software Foundation, either version 3 of the License, or (at your option)
+ # any later version.
+ #
+ # LAMA is distributed in the hope that it will be useful, but WITHOUT ANY
+ # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ # FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+ # more details.
+ #
+ # You should have received a copy of the GNU Lesser General Public License
+ # along with LAMA. If not, see <http://www.gnu.org/licenses/>.
+ # @endlicense
+ #
+ # @brief Definition of variables that will be included in each Makefile of examples
+ # @author Thomas Brandes
+ # @date 03.07.2017
+###
+
+SCAI_ROOT              = @CMAKE_INSTALL_PREFIX@
+SCAI_CUDA_INCLUDE_DIR  = @SCAI_CUDA_INCLUDE_DIR@
+
+CXX      = @CMAKE_CXX_COMPILER@
+CXX_CUDA = @CUDA_NVCC_EXECUTABLE@
+
+CXX_FLAGS       = @CMAKE_CXX_FLAGS@ @CMAKE_CXX_FLAGS_RELEASE@
+CXX_CUDA_FLAGS  = -ccbin ${CXX} @CUDA_NVCC_FLAGS_CLEAN@ 
+
+SCAI_DEFINES   = @SCAI_DEFINES@
+
+SCAI_CUDA_LIBRARY_PATH = @SCAI_CUDA_LIBRARY_PATH@
+SCAI_CUDA_LIBRARIES    = @SCAI_CUDA_LIBRARIES_CLEAN@
+
+ADDITIONAL_EXAMPLE_LINK_LIBRARIES = @ADDITIONAL_EXAMPLE_LINK_LIBRARIES@
+SCAI_LD_FLAGS                     = @CMAKE_EXE_LINKER_FLAGS@ -L@CMAKE_INSTALL_PREFIX@/lib @SCAI_EXAMPLE_LINK_LIBRARIES@ ${SCAI_CUDA_LIBRARIES}
+
+SCAI_EXECUTABLES = @EXAMPLE_EXECUTABLES@
+SCAI_MODULES     = @EXAMPLE_MODULES@
+SCAI_LIBS        = @EXAMPLE_LIBS@

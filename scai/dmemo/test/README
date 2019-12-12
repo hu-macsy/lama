@@ -1,0 +1,18 @@
+How to run the tests for dmemo (Distributed Memory)
+===================================================
+
+NoCommunicator:
+===============
+
+export SCAI_COMMUNICATOR=no
+
+./dmemoTest --log_level=test_suite
+
+MPI Communicator:
+=================
+
+export SCAI_COMMUNICATOR=mpi
+
+mpirun -np 1 ./dmemoTest
+mpirun -np 2 ./dmemoTest
+mpirun -np 4 ./dmemoTest

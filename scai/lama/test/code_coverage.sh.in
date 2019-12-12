@@ -1,0 +1,94 @@
+###
+ # @file code_coverage.sh
+ #
+ # @license
+ # Copyright (c) 2009-2018
+ # Fraunhofer Institute for Algorithms and Scientific Computing SCAI
+ # for Fraunhofer-Gesellschaft
+ #
+ # This file is part of the SCAI framework LAMA.
+ #
+ # LAMA is free software: you can redistribute it and/or modify it under the
+ # terms of the GNU Lesser General Public License as published by the Free
+ # Software Foundation, either version 3 of the License, or (at your option)
+ # any later version.
+ #
+ # LAMA is distributed in the hope that it will be useful, but WITHOUT ANY
+ # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ # FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+ # more details.
+ #
+ # You should have received a copy of the GNU Lesser General Public License
+ # along with LAMA. If not, see <http://www.gnu.org/licenses/>.
+ # @endlicense
+ #
+ # @brief This file is a shellscript, which contains all necessary steps to 
+ #        measure code coverage of LAMA.
+ # @author Lauretta Schubert, Thomas Brandes
+ # @date 15.08.2012
+###
+
+source scai_code_coverage_functions.sh
+
+# Check requirements for codecoverage
+requirements_coverage
+
+dirname=$(create_dir)
+echo "Create coverage directory: ${dirname}"
+prepare_coverage $dirname ../..
+
+export SCAI_LOG=WARN
+export SCAI_TRACE=time
+export SCAI_UNSUPPORTED=IGNORE
+	
+# check if installed LAMA version supports MPI communicator
+
+check_feature LAMA_SUPPORTS_MPI ./matrix/lamaMatrixTest --SCAI_COMMUNICATOR=MPI --run_test=SparseMatrixTest/localConstructorTest
+
+check_feature LAMA_SUPPORTS_CUDA ./lamaTest --SCAI_CONTEXT=CUDA --run_test=VersionTest
+
+# Running lama tests
+echo "Running serial lama tests on Host"
+count_error ./lamaTest --SCAI_CONTEXT=Host
+
+#Running lama storage tests
+echo "Running serial lama storage tests on Host"
+count_error ./storage/lamaStorageTest --SCAI_CONTEXT=Host
+
+#Running lama matrix tests
+echo "Running serial lama matrix tests on Host"
+count_error ./matrix/lamaMatrixTest --SCAI_CONTEXT=Host
+
+if [ ${LAMA_SUPPORTS_CUDA} -eq 1 ]
+then
+	# Running lama tests
+	echo "Running serial lama tests on CUDA"
+	count_error ./lamaTest --SCAI_CONTEXT=CUDA
+	
+	#Running lama storage tests
+	echo "Running serial lama storage tests on CUDA"
+	count_error ./storage/lamaStorageTest --SCAI_CONTEXT=CUDA
+	
+	#Running lama matrix tests
+	echo "Running serial lama matrix tests on CUDA"
+	count_error ./matrix/lamaMatrixTest --SCAI_CONTEXT=CUDA
+fi
+
+if [ ${LAMA_SUPPORTS_MPI} -eq 1 ];
+then
+    echo "Running lamaTest with 3 processes"
+    count_error mpirun -np 3 ./lamaTest --SCAI_CONTEXT=Host --SCAI_NUM_THREADS=1
+
+    echo "Running lamaMatrixTest with 3 processes"
+    count_error mpirun -np 3 ./matrix/lamaMatrixTest --SCAI_CONTEXT=Host --SCAI_NUM_THREADS=1
+fi
+
+exit_on_failure ${error_count}
+
+do_coverage $dirname ../.. "@CMAKE_SOURCE_DIR@/@MODULE_NAME@"
+
+exit_on_failure $?
+
+zip -qr ../lama_coverage.zip *
+
+echo "Code coverage run finished, results in directory: ${dirname}"

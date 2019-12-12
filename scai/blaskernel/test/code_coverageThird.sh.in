@@ -1,0 +1,47 @@
+###
+ # @file code_coverageThird.sh
+ #
+ # @license
+ # Copyright (c) 2009-2018
+ # Fraunhofer Institute for Algorithms and Scientific Computing SCAI
+ # for Fraunhofer-Gesellschaft
+ #
+ # This file is part of the SCAI framework LAMA.
+ #
+ # LAMA is free software: you can redistribute it and/or modify it under the
+ # terms of the GNU Lesser General Public License as published by the Free
+ # Software Foundation, either version 3 of the License, or (at your option)
+ # any later version.
+ #
+ # LAMA is distributed in the hope that it will be useful, but WITHOUT ANY
+ # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ # FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+ # more details.
+ #
+ # You should have received a copy of the GNU Lesser General Public License
+ # along with LAMA. If not, see <http://www.gnu.org/licenses/>.
+ # @endlicense
+ #
+ # @brief Shell script to generate html pages of code coverage test runs.
+ # @author Lauretta Schubert, Eric Schricker
+ # @date 15.08.2012
+###
+
+source scai_code_coverage_functions.sh
+
+# Check requirements for codecoverage
+requirements_coverage
+
+dirname=$(find_dir)
+echo "Found coverage directory: ${dirname}"
+
+# todo: remove this if jenkins cc works fine without it
+# problem with these, so first ignore
+tmpdir=CMakeFiles/blaskernelTest.dir
+rm $tmpdir/LAPACKTest.cpp.gcno $tmpdir/LAPACKTest.cpp.gcda $tmpdir/BLAS2Test.cpp.gcno $tmpdir/BLAS2Test.cpp.gcda
+
+do_coverage $dirname ../.. "@CMAKE_SOURCE_DIR@"
+
+exit_on_failure $?
+
+zip -qr ../blaskernel_coverage.zip *

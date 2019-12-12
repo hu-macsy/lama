@@ -1,0 +1,13 @@
+.svn
+build/
+install/
+Debug/
+.cproject
+.project
+.settings/
+doc/doxygen
+scai/doc/user/conf.py
+scai/logging/doc/user/conf.py
+res/testfiles/*.tmp.*
+.*.swp
+*.*~
