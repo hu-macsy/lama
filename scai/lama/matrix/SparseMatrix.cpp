@@ -1721,7 +1721,8 @@ void SparseMatrix<ValueType>::binaryOpSparse(
     if ( getColDistribution().isReplicated() )
     {
          // there is no halo and no halo storage 
-         mHaloData->allocate( getNumRows(), 0 );
+         //mHaloData->allocate( getNumRows(), 0 );
+		 mHaloData->allocate( mLocalData->getNumRows(), 0 );
          mHaloExchangePlan.clear();
     }
     else
