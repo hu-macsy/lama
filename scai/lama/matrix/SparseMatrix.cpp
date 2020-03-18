@@ -1776,9 +1776,10 @@ void SparseMatrix<ValueType>::matrixPlusMatrixSparse(
 
     if ( B.getColDistribution().isReplicated() )
     {
-         // there is no halo and no halo storage 
-         mHaloData->allocate( getNumRows(), 0 );
-         mHaloExchangePlan.clear();
+        // there is no halo and no halo storage 
+        //mHaloData->allocate( getNumRows(), 0 );
+        mHaloData->allocate( mLocalData->getNumRows(), 0 );
+        mHaloExchangePlan.clear();
     }
     else
     {
